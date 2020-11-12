@@ -14,7 +14,16 @@ interface ApiService {
     fun getP(
         @Field("bs") bs: String,
         @Field("sjh") sjh: String,
-        @Field("code") yzm: String
+        @Field("yzm") yzm: String
+    ): Observable<JsonObject>
+
+    @FormUrlEncoded
+    @POST("api.html")
+    fun login(
+        @Field("bs") bs: String,
+        @Field("sjh") sjh: String,
+        @Field("ck") ck: String,
+        @Field("fhz") fhz: String
     ): Observable<JsonObject>
 
     @FormUrlEncoded

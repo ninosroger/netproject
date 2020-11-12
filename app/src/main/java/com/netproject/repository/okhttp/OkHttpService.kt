@@ -1,11 +1,13 @@
 package com.netproject.repository.okhttp
 
-import com.netproject.repository.common.NetConstants
+import com.netproject.NetApplication
 import com.netproject.repository.api.ApiService
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Retrofit
+import com.netproject.repository.common.NetConstants
+import okhttp3.Interceptor.Companion.invoke
 import okhttp3.OkHttpClient
+import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class OkHttpService {
@@ -39,6 +41,19 @@ class OkHttpService {
                     .readTimeout(100, TimeUnit.SECONDS)
                     .writeTimeout(100, TimeUnit.SECONDS)
                     .connectTimeout(100, TimeUnit.SECONDS)
+                    .addInterceptor(invoke {
+                        var originalResponse = it.proceed(it.request())
+                        if (originalResponse.headers("set-cookie").isNotEmpty()) {
+                            var cookies = originalResponse.headers("set-cookie")
+                            var cookieBuffer = StringBuffer()
+                            for (str in cookies) {
+                                cookieBuffer.append(str).append(";")
+                            }
+                            NetApplication.cookies = cookieBuffer.toString()
+                                .substring(0, cookieBuffer.toString().length - 1)
+                        }
+                        return@invoke originalResponse
+                    })
                     .build()
             )
             .addConverterFactory(GsonConverterFactory.create())
