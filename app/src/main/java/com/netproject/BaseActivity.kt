@@ -8,9 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-/**
- * @author Ninos
- */
 abstract class BaseActivity<P : BasePresenter> : AppCompatActivity() {
     lateinit var context: Context
     lateinit var presenter: P
